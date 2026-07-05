@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Liar's Table — How to Play</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Russo+One&family=Chakra+Petch:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --burgundy: #7A0043; --burgundy-deep: #4A0028; --burgundy-darkest: #2A0016;
+      --burgundy-light: #9E1A63; --felt: #5C0030;
+      --gold: #D4AF37; --gold-bright: #F5CE5B; --gold-dim: #8A6F1E;
+      --cream: #F5E6D3; --dark: #0A0405; --red: #FF2D55; --green: #34C759;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background:
+        radial-gradient(ellipse at 50% -10%, rgba(122, 0, 67, 0.35) 0%, transparent 55%),
+        radial-gradient(ellipse at 85% 110%, rgba(122, 0, 67, 0.2) 0%, transparent 50%),
+        var(--dark);
+      color: var(--cream);
+      font-family: 'Chakra Petch', sans-serif;
+      min-height: 100vh;
+      line-height: 1.7;
+    }
+
+    .container { max-width: 860px; margin: 0 auto; padding: 0 24px 120px; }
+
+    /* ═══ HERO ═══ */
+    .hero {
+      text-align: center;
+      padding: 90px 24px 70px;
+      position: relative;
+    }
+
+    .hero .suits {
+      font-family: 'Cinzel', serif;
+      font-size: 30px;
+      letter-spacing: 22px;
+      color: var(--gold-dim);
+      margin-bottom: 18px;
+      opacity: 0.7;
+    }
+
+    .hero h1 {
+      font-family: 'Cinzel', serif;
+      font-weight: 900;
+      font-size: clamp(44px, 8vw, 76px);
+      letter-spacing: 14px;
+      background: linear-gradient(180deg, var(--gold-bright) 0%, var(--gold) 50%, var(--gold-dim) 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      filter: drop-shadow(0 4px 24px rgba(212, 175, 55, 0.25));
+    }
+
+    .hero .tagline {
+      margin-top: 18px;
+      font-size: 16px;
+      letter-spacing: 5px;
+      color: rgba(245, 230, 211, 0.55);
+      text-transform: uppercase;
+    }
+
+    .hero .warning {
+      display: inline-block;
+      margin-top: 34px;
+      padding: 10px 26px;
+      border: 1px solid rgba(255, 45, 85, 0.4);
+      border-radius: 4px;
+      color: var(--red);
+      font-size: 13px;
+      letter-spacing: 3px;
+      background: rgba(255, 45, 85, 0.06);
+    }
+
+    /* ═══ SECTIONS ═══ */
+    section { margin-top: 76px; }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      margin-bottom: 28px;
+    }
+
+    .section-num {
+      font-family: 'Cinzel', serif;
+      font-weight: 900;
+      font-size: 15px;
+      color: var(--dark);
+      background: linear-gradient(135deg, var(--gold-bright), var(--gold));
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      box-shadow: 0 0 24px rgba(212, 175, 55, 0.35);
+    }
+
+    .section-header h2 {
+      font-family: 'Cinzel', serif;
+      font-weight: 700;
+      font-size: 26px;
+      letter-spacing: 5px;
+      color: var(--gold);
+    }
+
+    p { color: rgba(245, 230, 211, 0.82); margin-bottom: 14px; }
+    strong { color: var(--gold-bright); font-weight: 700; }
+    em { color: var(--cream); font-style: normal; border-bottom: 1px dotted var(--gold-dim); }
+
+    /* card panel */
+    .panel {
+      background: linear-gradient(160deg, rgba(74, 0, 40, 0.45) 0%, rgba(42, 0, 22, 0.55) 100%);
+      border: 1px solid rgba(212, 175, 55, 0.25);
+      border-radius: 12px;
+      padding: 28px 30px;
+      margin-bottom: 18px;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(212, 175, 55, 0.15);
+    }
+
+    /* command chips */
+    code {
+      font-family: 'Chakra Petch', monospace;
+      background: rgba(212, 175, 55, 0.12);
+      border: 1px solid rgba(212, 175, 55, 0.35);
+      color: var(--gold-bright);
+      padding: 2px 10px;
+      border-radius: 4px;
+      font-size: 0.92em;
+      white-space: nowrap;
+    }
+
+    /* deck visual */
+    .deck-grid {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin: 26px 0 10px;
+    }
+
+    .deck-card {
+      width: 108px; height: 150px;
+      border-radius: 10px;
+      border: 2px solid var(--gold);
+      background: linear-gradient(160deg, #F5E6D3 0%, #E5D0B5 100%);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 4px;
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.5);
+      transition: transform 0.25s ease;
+    }
+
+    .deck-card:hover { transform: translateY(-8px) rotate(-2deg); }
+
+    .deck-card .icon { font-family: 'Cinzel', serif; font-size: 44px; color: var(--burgundy); }
+    .deck-card .label { font-family: 'Cinzel', serif; font-weight: 700; font-size: 13px; letter-spacing: 2px; color: var(--burgundy-deep); }
+    .deck-card .count { font-size: 11px; color: var(--burgundy-light); letter-spacing: 1px; }
+    .deck-card.joker .icon, .deck-card.joker .label { color: #C41230; }
+
+    /* step list */
+    .steps { list-style: none; counter-reset: step; }
+    .steps li {
+      counter-increment: step;
+      position: relative;
+      padding: 16px 0 16px 58px;
+      border-bottom: 1px solid rgba(212, 175, 55, 0.12);
+    }
+    .steps li:last-child { border-bottom: none; }
+    .steps li::before {
+      content: counter(step);
+      position: absolute;
+      left: 0; top: 16px;
+      width: 34px; height: 34px;
+      border: 1px solid var(--gold-dim);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Russo One', sans-serif;
+      font-size: 14px;
+      color: var(--gold);
+    }
+
+    /* commands table */
+    .cmd-table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+    .cmd-table th {
+      text-align: left;
+      font-family: 'Cinzel', serif;
+      font-size: 12px;
+      letter-spacing: 3px;
+      color: var(--gold-dim);
+      padding: 10px 14px;
+      border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+    }
+    .cmd-table td {
+      padding: 13px 14px;
+      border-bottom: 1px solid rgba(212, 175, 55, 0.1);
+      font-size: 14px;
+      color: rgba(245, 230, 211, 0.85);
+      vertical-align: top;
+    }
+    .cmd-table tr:last-child td { border-bottom: none; }
+
+    /* verdict cards */
+    .verdict-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 20px; }
+    @media (max-width: 640px) { .verdict-grid { grid-template-columns: 1fr; } }
+
+    .verdict {
+      border-radius: 10px;
+      padding: 22px;
+      text-align: center;
+      border: 1px solid;
+    }
+    .verdict.lie { border-color: rgba(255, 45, 85, 0.4); background: rgba(255, 45, 85, 0.06); }
+    .verdict.truth { border-color: rgba(52, 199, 89, 0.4); background: rgba(52, 199, 89, 0.06); }
+    .verdict h3 { font-family: 'Cinzel', serif; font-weight: 900; font-size: 24px; letter-spacing: 5px; margin-bottom: 10px; }
+    .verdict.lie h3 { color: var(--red); }
+    .verdict.truth h3 { color: var(--green); }
+    .verdict p { font-size: 14px; margin: 0; }
+
+    /* revolver visual */
+    .roulette-visual {
+      display: flex;
+      align-items: center;
+      gap: 30px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 22px;
+    }
+
+    .mini-cylinder {
+      width: 150px; height: 150px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, #3A3A3A 0%, #1A1A1A 60%, #050505 100%);
+      box-shadow: 0 0 0 3px #2A2A2A, 0 0 0 5px var(--gold), 0 12px 32px rgba(0,0,0,0.7);
+      position: relative;
+      flex-shrink: 0;
+    }
+    .mini-chamber {
+      position: absolute;
+      width: 30px; height: 30px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 40% 40%, #0A0A0A, #000);
+      border: 1px solid #2A2A2A;
+    }
+    .mini-chamber.loaded::before {
+      content: '';
+      position: absolute; inset: 3px; border-radius: 50%;
+      background: radial-gradient(circle at 35% 32%, #FFE9A8 0%, var(--gold-bright) 18%, var(--gold) 45%, #A67C1E 75%, #6E4F12 100%);
+      box-shadow: inset 0 -1px 3px rgba(0,0,0,0.55), inset 0 1px 2px rgba(255,240,190,0.7);
+    }
+    .mini-chamber.loaded::after {
+      content: '';
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 34%; height: 34%; border-radius: 50%;
+      background: radial-gradient(circle at 38% 34%, #E8E4DC 0%, #B8B2A6 40%, #7A756B 75%, #4A463F 100%);
+      box-shadow: inset 0 1px 1px rgba(255,255,255,0.5), 0 0 2px rgba(0,0,0,0.8);
+    }
+    .roulette-explain { flex: 1; min-width: 260px; }
+
+    .bullet-scale {
+      display: flex;
+      gap: 8px;
+      margin-top: 14px;
+      flex-wrap: wrap;
+    }
+    .bullet-stage {
+      flex: 1;
+      min-width: 76px;
+      text-align: center;
+      padding: 10px 6px;
+      border: 1px solid rgba(212, 175, 55, 0.2);
+      border-radius: 6px;
+      font-size: 12px;
+    }
+    .bullet-stage .odds { font-family: 'Russo One', sans-serif; font-size: 17px; color: var(--gold); }
+    .bullet-stage.danger .odds { color: var(--red); }
+    .bullet-stage .lbl { color: rgba(245, 230, 211, 0.5); font-size: 10px; letter-spacing: 1px; }
+
+    /* example play */
+    .example-flow {
+      border-left: 2px solid var(--gold-dim);
+      padding-left: 22px;
+      margin-top: 18px;
+    }
+    .example-flow .beat {
+      margin-bottom: 16px;
+      position: relative;
+    }
+    .example-flow .beat::before {
+      content: '';
+      position: absolute;
+      left: -27px; top: 8px;
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--gold);
+    }
+    .example-flow .who { font-family: 'Russo One', sans-serif; font-size: 13px; color: var(--gold); letter-spacing: 1px; }
+    .example-flow .what { font-size: 14px; color: rgba(245, 230, 211, 0.8); }
+
+    /* footer */
+    footer {
+      margin-top: 100px;
+      text-align: center;
+      color: var(--gold-dim);
+      font-size: 12px;
+      letter-spacing: 4px;
+    }
+    footer .suits { font-size: 20px; letter-spacing: 14px; margin-bottom: 12px; opacity: 0.6; }
+
+    .tip {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      background: rgba(212, 175, 55, 0.06);
+      border: 1px solid rgba(212, 175, 55, 0.2);
+      border-radius: 8px;
+      padding: 14px 18px;
+      margin-top: 16px;
+      font-size: 14px;
+    }
+    .tip .tip-icon { color: var(--gold); font-size: 18px; flex-shrink: 0; }
+  </style>
+</head>
+<body>
+
+  <div class="hero">
+    <div class="suits">♠ ♛ ♚ ★ ♠</div>
+    <h1>LIAR'S TABLE</h1>
+    <div class="tagline">A game of bluffs, accusations &amp; consequences</div>
+    <div class="warning">LIE WELL — OR PULL THE TRIGGER</div>
+  </div>
+
+  <div class="container">
+
+    <!-- WHAT IS THIS -->
+    <section>
+      <div class="section-header">
+        <div class="section-num">I</div>
+        <h2>THE GAME</h2>
+      </div>
+      <div class="panel">
+        <p>Liar's Table is a bluffing card game played live on stream. Up to <strong>4 players</strong> sit at the table. Each round, you play cards face-down and <em>declare</em> what they are. You can tell the truth. You can lie through your teeth. Nobody knows — until someone calls <strong>LIAR</strong>.</p>
+        <p>Get caught lying, or make a false accusation, and you face the revolver. Survive long enough to be the <strong>last player alive</strong> and you win the table.</p>
+      </div>
+
+      <div class="panel">
+        <p style="text-align:center; font-family:'Cinzel',serif; letter-spacing:4px; color:var(--gold-dim); font-size:13px; margin-bottom:4px;">THE DECK — 20 CARDS</p>
+        <div class="deck-grid">
+          <div class="deck-card"><span class="icon">♚</span><span class="label">KING</span><span class="count">× 6</span></div>
+          <div class="deck-card"><span class="icon">♛</span><span class="label">QUEEN</span><span class="count">× 6</span></div>
+          <div class="deck-card"><span class="icon">★</span><span class="label">ACE</span><span class="count">× 6</span></div>
+          <div class="deck-card joker"><span class="icon">🃏</span><span class="label">JOKER</span><span class="count">× 2 · WILD</span></div>
+        </div>
+        <p style="text-align:center; font-size:13px; color:rgba(245,230,211,0.5);">Jokers are <strong>wild</strong> — they count as whatever you claim them to be. A Joker can never be a lie.</p>
+      </div>
+    </section>
+
+    <!-- GETTING SEATED -->
+    <section>
+      <div class="section-header">
+        <div class="section-num">II</div>
+        <h2>GETTING SEATED</h2>
+      </div>
+      <div class="panel">
+        <p>Your cards are dealt <strong>privately through Discord DM</strong>, so you'll link your Kick account once before your first game:</p>
+        <ol class="steps">
+          <li>DM the Discord bot: <code>link your_kick_username</code></li>
+          <li>The bot replies with a 5-letter code. Type <code>!verify YOURCODE</code> in the Kick chat within 5 minutes.</li>
+          <li>You're linked — permanently. You never have to do this again.</li>
+          <li>When a lobby opens on stream, type <code>!joingame</code> in Kick chat to grab one of the 4 seats.</li>
+        </ol>
+        <div class="tip">
+          <span class="tip-icon">♦</span>
+          <span>When the game starts, the bot DMs you your 5 cards with slot numbers. After every play it re-sends your updated hand — <strong>always read the newest message</strong>, the round number is in the title.</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- HOW A ROUND WORKS -->
+    <section>
+      <div class="section-header">
+        <div class="section-num">III</div>
+        <h2>HOW A ROUND WORKS</h2>
+      </div>
+      <div class="panel">
+        <p>Everyone alive is dealt <strong>5 cards</strong>. On your turn, play <strong>1 to 3 cards</strong> face-down and declare them, like <code>!play 1,3 kings</code> — that says "slots 1 and 3 from my hand, and I claim they're Kings."</p>
+        <p><strong>The first claim of the round locks the type.</strong> If the opener declares Kings, it's a Kings round — every play after that must also claim Kings. Whether your cards actually <em>are</em> Kings is your business.</p>
+        <p>After each play, the next player has <strong>15 seconds</strong> to decide:</p>
+        <div class="verdict-grid">
+          <div class="verdict truth">
+            <h3>PASS</h3>
+            <p>Say nothing and the play stands. It becomes your turn — play your own cards and keep the round moving.</p>
+          </div>
+          <div class="verdict lie">
+            <h3>!LIAR</h3>
+            <p>Call it. The cards flip face-up on stream for everyone to see. Somebody's about to face the gun.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <p style="font-family:'Cinzel',serif; letter-spacing:3px; color:var(--gold-dim); font-size:13px;">EXAMPLE</p>
+        <div class="example-flow">
+          <div class="beat"><div class="who">WILDVIEWER1</div><div class="what">Plays 2 cards: <code>!play 2,4 queens</code> — "Two Queens." (They're actually a Queen and an Ace. A lie.)</div></div>
+          <div class="beat"><div class="who">WILDVIEWER2</div><div class="what">Smells blood: <code>!liar</code></div></div>
+          <div class="beat"><div class="who">THE TABLE</div><div class="what">Cards flip: Queen... Ace. <strong style="color:var(--red)">LIAR!</strong> Wildviewer1 picks up the revolver.</div></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <p><strong>Emptying your hand makes you SAFE.</strong> Once you play your last card (and survive any challenge), you're out of the round — you can't be challenged, and you can't challenge anyone. The round continues without you.</p>
+        <p>Here's the trap: when everyone else goes safe, the <strong>last player still holding cards faces the revolver automatically</strong>. No reveal, no challenge — just the gun. Dump your cards fast, or die slow.</p>
+      </div>
+    </section>
+
+    <!-- THE REVOLVER -->
+    <section>
+      <div class="section-header">
+        <div class="section-num">IV</div>
+        <h2>THE REVOLVER</h2>
+      </div>
+      <div class="panel">
+        <div class="roulette-visual">
+          <div class="mini-cylinder" id="mini-cylinder"></div>
+          <div class="roulette-explain">
+            <p>Six chambers. Your first pull is <strong>1 bullet in 6</strong>. Survive the click and a <strong>new bullet is loaded permanently</strong> — your next pull is 2 in 6, then 3 in 6...</p>
+            <p style="margin-bottom:0;">The gun never forgets. Every escape makes the next one harder.</p>
+          </div>
+        </div>
+        <div class="bullet-scale">
+          <div class="bullet-stage"><div class="odds">17%</div><div class="lbl">1ST PULL</div></div>
+          <div class="bullet-stage"><div class="odds">33%</div><div class="lbl">2ND PULL</div></div>
+          <div class="bullet-stage"><div class="odds">50%</div><div class="lbl">3RD PULL</div></div>
+          <div class="bullet-stage danger"><div class="odds">67%</div><div class="lbl">4TH PULL</div></div>
+          <div class="bullet-stage danger"><div class="odds">83%</div><div class="lbl">5TH PULL</div></div>
+          <div class="bullet-stage danger"><div class="odds">100%</div><div class="lbl">6TH PULL</div></div>
+        </div>
+        <div class="tip">
+          <span class="tip-icon">♦</span>
+          <span>Whoever faces the gun and survives <strong>opens the next round</strong> — and gets to pick the claim type.</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- WINNING -->
+    <section>
+      <div class="section-header">
+        <div class="section-num">V</div>
+        <h2>WINNING</h2>
+      </div>
+      <div class="panel">
+        <p>Every round, <strong>exactly one player pulls the trigger</strong> — either from a failed challenge or from being the last one holding cards. Rounds repeat, bullets accumulate, players fall.</p>
+        <p style="margin-bottom:0;">The <strong>last player alive</strong> takes the table. That's it. No points, no second place. Survive.</p>
+      </div>
+    </section>
+
+    <!-- COMMANDS -->
+    <section>
+      <div class="section-header">
+        <div class="section-num">VI</div>
+        <h2>COMMAND REFERENCE</h2>
+      </div>
+      <div class="panel">
+        <table class="cmd-table">
+          <tr><th>WHERE</th><th>COMMAND</th><th>WHAT IT DOES</th></tr>
+          <tr><td>Discord DM</td><td><code>link kickname</code></td><td>Start linking your Kick account (one time)</td></tr>
+          <tr><td>Kick chat</td><td><code>!verify CODE</code></td><td>Complete the link with the code from the bot</td></tr>
+          <tr><td>Discord DM</td><td><code>whoami</code></td><td>Check which Kick account you're linked to</td></tr>
+          <tr><td>Kick chat</td><td><code>!joingame</code></td><td>Take a seat when a lobby is open</td></tr>
+          <tr><td>Kick chat</td><td><code>!play 1,3 kings</code></td><td>Play cards from your hand slots, declare the type</td></tr>
+          <tr><td>Kick chat</td><td><code>!liar</code></td><td>Challenge the previous play (15s window)</td></tr>
+        </table>
+        <div class="tip">
+          <span class="tip-icon">♦</span>
+          <span>Claims accept singular, plural, or shorthand: <code>king</code>, <code>kings</code>, or <code>k</code> all work. Same for queens (<code>q</code>) and aces (<code>a</code>).</span>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div class="suits">♠ ♛ ♚ ★ ♠</div>
+      LIAR'S TABLE · LIVE ON KICK.COM/WILDLINES
+    </footer>
+  </div>
+
+  <script>
+    // build the mini cylinder chambers (2 loaded for visual interest)
+    const cyl = document.getElementById('mini-cylinder');
+    const SIZE = 150, CH = 30, R = 44;
+    for (let i = 0; i < 6; i++) {
+      const angle = (i * 60 - 90) * Math.PI / 180;
+      const ch = document.createElement('div');
+      ch.className = `mini-chamber ${i < 2 ? 'loaded' : ''}`;
+      ch.style.left = (SIZE / 2 + R * Math.cos(angle) - CH / 2) + 'px';
+      ch.style.top = (SIZE / 2 + R * Math.sin(angle) - CH / 2) + 'px';
+      cyl.appendChild(ch);
+    }
+  </script>
+</body>
+</html>
